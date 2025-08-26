@@ -19,8 +19,8 @@ context = Context.TIKTOK
 def has_feed_changed(existing_path, data):
    root = ET.parse(existing_path).getroot()
    existing_guids = [ x.text for x in root.findall("./channel/item/guid") ]
-   guids = [ x["guid"] for x in reversed(data["items"]) ]
-   return guids == existing_guids
+   guids = [ x["guid"] for x in data["items"] ]
+   return guids != existing_guids
 
 def retrieve_feed_data(config):
     match context:
