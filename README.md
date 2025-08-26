@@ -1,10 +1,3 @@
----
-author: "Jim"
-title: "rssr"
-date: 2025-08-25T21:24:12+01:00
-draft: true 
----
-
 **Really Simple Syndication Replicator** (**rssr**) pronounced 
 ['**aire es es aire**'] is an rss feed generator for content not officially 
 supporting rss.
