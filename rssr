@@ -1,0 +1,105 @@
+#!/usr/bin/env python
+# Copyright (c) 2025 Jim
+# /
+
+import argparse
+import os
+import sys
+import xml.etree.ElementTree as ET
+from enum import Enum
+from generate import generate_rss_xml
+import tiktok
+import configparser
+
+class Context(Enum):
+    TIKTOK=1
+
+context = Context.TIKTOK
+
+def has_feed_changed(existing_path, data):
+   root = ET.parse(existing_path).getroot()
+   existing_guids = [ x.text for x in root.findall("./channel/item/guid") ]
+   guids = [ x["guid"] for x in reversed(data["items"]) ]
+   return guids == existing_guids
+
+def retrieve_feed_data(config):
+    match context:
+        case Context.TIKTOK:
+            return tiktok.retrieve(config)
+
+def pargs():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('outputfile')
+    parser.add_argument(
+        '-e', 
+        dest="check_existing", 
+        action="store_const", 
+        default=False, 
+        const=True, 
+        help="checks outputfile exists and only overwrites with new entries"
+    )
+    parser.add_argument(
+        '-c', 
+        dest="configfile", 
+        metavar="config", 
+        default="rssr.conf", 
+        help="path to config file (default is ./rssr.conf)"
+    )
+    parser.add_argument(
+        '-t', 
+        dest="title", 
+        metavar="title", 
+        default=None, 
+        help="set title for rss feed, overrides config"
+    )
+    parser.add_argument(
+        '-l', 
+        dest="link",
+        metavar="link", 
+        default=None, 
+        help="sets link for rss feed, overrides config"
+    )
+    parser.add_argument(
+        '-d', 
+        dest="desc", 
+        metavar="description", 
+        default=None, 
+        help="sets description for rss feed, overrides config"
+    )
+
+    return parser.parse_args()
+
+def main():
+    args = pargs()
+    config = configparser.ConfigParser()
+
+    if os.path.exists(args.configfile):
+        config.read(args.configfile)
+
+    data = retrieve_feed_data(config)
+    if data is None:
+        print("Failed to retrieve required data.", file=sys.stderr)
+        exit(1)
+    
+    # -e option 
+    if args.check_existing and os.path.exists(args.outputfile) and has_feed_changed(args.outputfile, data) == False:
+        print("No changes detected, exiting early.")
+        exit(1)
+    elif args.check_existing:
+        print("Changes detected!")
+       
+    if 'rss' not in config:
+       config['rss'] = {}
+    if args.title is not None:
+        config.set('rss', 'title', str(args.title))
+    if args.link is not None:
+        config.set('rss', 'link', str(args.link))
+    if args.desc is not None:
+        config.set('rss', 'description', str(args.desc))
+
+    xml = generate_rss_xml(data, config)
+    with open(args.outputfile, "w") as f:
+        f.write(xml)
+
+if __name__ == '__main__':
+    main()

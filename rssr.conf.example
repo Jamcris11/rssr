@@ -1,0 +1,7 @@
+[rss]
+title 		= <feed_title>
+link  		= <feed_link> 
+description = <feed_description>
+
+[TikTok]
+secUid  = <insert_secUid_here> 
