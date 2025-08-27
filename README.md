@@ -28,7 +28,7 @@ options:
 rssr -e -c tiktok_<username>.conf tiktok_<username>.xml
 ```
 
-#### tiktok\_officialvarg.conf
+#### tiktok\_\<username\>.conf
 ```INI
 [rss]
 title 		= TikTok feed of @<username>
