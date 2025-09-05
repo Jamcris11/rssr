@@ -51,10 +51,10 @@ I decided I wanted a way to integrate notifications into my already existing
 rss, but TikTok provides no official rss feed support from their website. 
 So I started making this program to utilise TikTok's POST request's to get the 
 relevant data and compile it into a usable rss.xml, which I then can self-host 
-for my rss-clients to connect to (see [feeds.](/feeds))
+for my rss-clients to connect to (see [feeds.](https://jimscorner.co.uk/feeds/))
 
 Whilst TikTok user videos are currently the only supported unofficial content
 and main motivation for making **rssr**, I've left it open for implementations 
 of other types of content.
 
-
+You can read about [how I use rssr here](https://jimscorner.co.uk/posts/rssr-personal-setup/).
